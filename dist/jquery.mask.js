@@ -230,8 +230,15 @@
             },
             getMasked: function(skipMaskChars, val) {
                 var buf = [],
-                    value = val === undefined ? p.val() : val + '',
-                    m = 0, maskLen = mask.length,
+                    value = val === undefined ? p.val() : val + '';
+                    if(options.prefix && value.indexOf(options.prefix) === 0) {
+                        if(value === options.prefix) {
+                            value = '';
+                        } else {
+                            value = value.substring(1, value.length);
+                        }
+                    }
+                    var m = 0, maskLen = mask.length,
                     v = 0, valLen = value.length,
                     offset = 1, addMethod = 'push',
                     resetPos = -1,
@@ -303,7 +310,12 @@
                     buf.push(lastMaskCharDigit);
                 }
 
-                return buf.join('');
+                var maskedValue = buf.join('');
+                if(!skipMaskChars && options.prefix && value.length > 0) {
+                    maskedValue = options.prefix + maskedValue;
+                }
+
+                return maskedValue; // buf.join('');
             },
             callbacks: function (e) {
                 var val = p.val(),
