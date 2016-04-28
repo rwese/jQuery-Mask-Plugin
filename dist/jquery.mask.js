@@ -238,6 +238,10 @@
                             value = value.substring(1, value.length);
                         }
                     }
+                    //strip leading zeros until all are gone.
+                    while(true === options.noLeadingZero && value.indexOf('0') === 0) { 
+                        value = value.substring(1, value.length);
+                    }
                     var m = 0, maskLen = mask.length,
                     v = 0, valLen = value.length,
                     offset = 1, addMethod = 'push',
