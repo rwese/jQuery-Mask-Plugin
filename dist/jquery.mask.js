@@ -228,7 +228,7 @@
                     return p.callbacks(e);
                 }
             },
-            getMasked: function(skipMaskChars, val) {
+            getMasked: function(skipMaskChars, val, getCleanFirst=true) {
                 var buf = [],
                     value = val === undefined ? p.val() : val + '';
                     if(options.prefix && value.indexOf(options.prefix) === 0) {
@@ -239,8 +239,13 @@
                         }
                     }
                     //strip leading zeros until all are gone.
-                    while(true === options.noLeadingZero && value.indexOf('0') === 0) { 
-                        value = value.substring(1, value.length);
+                    if(true === options.noLeadingZero) {
+                        if(!skipMaskChars && getCleanFirst) {
+                            value = p.getMasked(true, value, false);
+                        }
+                        while(value.indexOf('0') === 0) { 
+                            value = value.substring(1, value.length);
+                        }
                     }
                     var m = 0, maskLen = mask.length,
                     v = 0, valLen = value.length,
