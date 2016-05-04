@@ -228,31 +228,32 @@
                     return p.callbacks(e);
                 }
             },
-            getMasked: function(skipMaskChars, val, getCleanFirst=true) {
+            getMasked: function(skipMaskChars, val, getCleanFirst) {
+                getCleanFirst = getCleanFirst || true;
                 var buf = [],
-                    value = val === undefined ? p.val() : val + '';
-                    if(options.prefix && value.indexOf(options.prefix) === 0) {
-                        if(value === options.prefix) {
-                            value = '';
-                        } else {
-                            value = value.substring(1, value.length);
-                        }
+                value = val === undefined ? p.val() : val + '';
+                if(options.prefix && value.indexOf(options.prefix) === 0) {
+                    if(value === options.prefix) {
+                        value = '';
+                    } else {
+                        value = value.substring(1, value.length);
                     }
-                    //strip leading zeros until all are gone.
-                    if(true === options.noLeadingZero) {
-                        if(!skipMaskChars && getCleanFirst) {
-                            value = p.getMasked(true, value, false);
-                        }
-                        while(value.indexOf('0') === 0) { 
-                            value = value.substring(1, value.length);
-                        }
+                }
+                //strip leading zeros until all are gone.
+                if(true === options.noLeadingZero) {
+                    if(!skipMaskChars && getCleanFirst) {
+                        value = p.getMasked(true, value, false);
                     }
-                    var m = 0, maskLen = mask.length,
-                    v = 0, valLen = value.length,
-                    offset = 1, addMethod = 'push',
-                    resetPos = -1,
-                    lastMaskChar,
-                    check;
+                    while(value.indexOf('0') === 0) { 
+                        value = value.substring(1, value.length);
+                    }
+                }
+                var m = 0, maskLen = mask.length,
+                v = 0, valLen = value.length,
+                offset = 1, addMethod = 'push',
+                resetPos = -1,
+                lastMaskChar,
+                check;
 
                 if (options.reverse) {
                     addMethod = 'unshift';
