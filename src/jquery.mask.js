@@ -203,26 +203,34 @@
             behaviour: function(e) {
                 e = e || window.event;
                 p.invalid = [];
-
-                var keyCode = el.data('mask-keycode');
-
+                var keyCode = e.keyCode || e.which;
                 if ($.inArray(keyCode, jMask.byPassKeys) === -1) {
-                    var caretPos    = p.getCaret(),
-                        currVal     = p.val(),
-                        currValL    = currVal.length,
-                        newVal      = p.getMasked(),
-                        newValL     = newVal.length,
-                        maskDif     = p.getMCharsBeforeCount(newValL - 1) - p.getMCharsBeforeCount(currValL - 1),
-                        changeCaret = caretPos < currValL;
 
-                    p.val(newVal);
+                    var tryChangeCarret = function() {
+                        var caretPos = p.getCaret(),
+                            currVal = p.val(),
+                            currValL = currVal.length,
+                            changeCaret = caretPos < currValL,
+                            newVal = p.getMasked(),
+                            newValL = newVal.length,
+                            maskDif = p.getMCharsBeforeCount(newValL - 1) - p.getMCharsBeforeCount(currValL - 1);
 
-                    if (changeCaret) {
-                        // Avoid adjusting caret on backspace or delete
-                        if (!(keyCode === 8 || keyCode === 46)) {
-                            caretPos = p.caretPos(caretPos, currValL, newValL, maskDif);
+                        p.val(newVal);
+
+                        // change caret but avoid CTRL+A
+                        if (changeCaret && !(keyCode === 65 && e.ctrlKey)) {
+                            // Avoid adjusting caret on backspace or delete
+                            if (!(keyCode === 8 || keyCode === 46)) {
+                                caretPos = p.caretPos(caretPos, currValL, newValL, maskDif);
+                            }
+                            p.setCaret(caretPos);
                         }
-                        p.setCaret(caretPos);
+                    };
+
+                    if (navigator.userAgent.indexOf("Android") > -1) {
+                        setTimeout(tryChangeCarret, 0);
+                    } else {
+                        tryChangeCarret();
                     }
 
                     return p.callbacks(e);
